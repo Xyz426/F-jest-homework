@@ -2,10 +2,12 @@ import VaccineTest from "../vaccineTest";
 import Recipient from "../recipient";
 import Covid19Vaccine from "../covid19Vaccine";
 
+const mockAcceptInjection = jest.fn();
+const mockGetHasAntibodies = jest.fn();
 jest.mock("../recipient", () => {
   return jest.fn().mockImplementation(() => ({
-    hasAntibodies: false,
-    acceptInjection: jest.fn(),
+    getHasAntibodies: mockGetHasAntibodies,
+    acceptInjection: mockAcceptInjection,
   }));
 });
 
@@ -19,7 +21,7 @@ describe("inject", () => {
     // TODO 14: add test here
     const vaccineTest = new VaccineTest();
     vaccineTest.inject();
-    expect(vaccineTest.recipient.acceptInjection).toHaveBeenCalledWith(
+    expect(mockAcceptInjection).toHaveBeenCalledWith(
       expect.any(Covid19Vaccine)
     );
   });
@@ -29,14 +31,14 @@ describe("test", () => {
   test("should get Success if recipient has antibodies", () => {
     // TODO 15: add test here
     const vaccineTest = new VaccineTest();
-    vaccineTest.recipient.getHasAntibodies = jest.fn().mockReturnValue(true);
+    mockGetHasAntibodies.mockReturnValue(true);
     expect(vaccineTest.test()).toBe("Vaccine Test Success");
   });
 
   test("should get Failed if recipient has no antibodies", () => {
     // TODO 16: add test here
     const vaccineTest = new VaccineTest();
-    vaccineTest.recipient.getHasAntibodies = jest.fn().mockReturnValue(false);
+    mockGetHasAntibodies.mockReturnValue(false);
     expect(vaccineTest.test()).toBe("Vaccine Test Failed");
   });
 });
